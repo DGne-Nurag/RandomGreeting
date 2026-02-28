@@ -1,0 +1,5 @@
+## Interface: 11508, 20505
+## Title: RandomGreeting
+## Notes: Posts a random message without repeats.
+## SavedVariables: RandomGreetingDB
+RandomGreeting.lua
