@@ -4,7 +4,7 @@
 local defaultByes = {
     "Ciao for now", "Tschüsseldorf", "Adios Amigos", "Tschüssikowski", 
     "San Frantschüssko", "Tschüsli Müsli", "Tschüssing", "Ciao Kakao", 
-    "Tschüssinger", "Ciao mit Au", "Adele", "Bis Baldrian", 
+    "Tschüssinger", "Ciao mit Au", "Bis Baldrian", "Ciaokelstuhl",
     "Bis dannimannski", "Bis Danzig", "Bis Denver", "Wirsing", 
     "Bis denne, Antenne", "Hastalavista, Mister", "Tüdelü", "Bye Bye, Butterfly", 
     "Hau rein, Brian", "Mach’s gut, aber nicht zu oft", "Paris, Athen, auf Wiedersehn", 
@@ -15,17 +15,14 @@ local defaultByes = {
     "Tudelu Känguru", "See you soon Sailor Moon", "Adieu Mathieu", 
     "Rammel den Björn, auf wiederhörn", "Ferrero Tschüsschen", "Bundesgartenciao", 
     "Bis Spätersilie", "Tchövapcici", "Auf wirsing", "Goodbayern", "Machs Gucci", 
-    "Ciao mit V", "Ciaokelstuhl", "Auf videosehen", "Tschüssi mit üssi"
+    "Ciao mit V", "Auf videosehen", "Tschüssi mit üssi"
 }
 
 local defaultHis = {
     "Huhu!", "Hallöchen Popöchen!", "Moinsen!", "Greetings!", "Seid gegrüßt!",
-    "Blood and Thunder!", "Blut und Donner!", "Light be with you.", "Das Licht mit euch.",
-    "Time is money, friend!", "Zeit ist Geld, mein Freund!", "Well met!",
-    "Ishnu-alah!", "Stay away from the Voodoo.", "Haltet euch vom Voodoo fern.",
-    "Greetings, Earthlings!", "What's cooking, good looking?", "Aloha!",
-    "Howdy, partner!", "Ahoy, Mateys!", "Moin Moin!", "Einen wunderschönen guten Gulasch!",
-    "Level 100 Boss betritt das Gebäude!", "Bin bereit zum Lootsammeln!"
+    "Blood and Thunder!", "Blut und Donner!", "Light be with you.", "Das Licht sei mit euch.",
+    "Well met!", "Ishnu-alah!", "Howdy, partner!", "Ahoy, Mateys!", "Moin Moin!",
+    "Greetings, Earthlings!", "What's cooking, good looking?", "Aloha!"
 }
 
 -- ==========================================================
