@@ -48,7 +48,7 @@ f:SetScript("OnEvent", function(self, event, name)
         end
         RandomGreetingDB.byePool = RandomGreetingDB.byePool or {}
         
-        print("|cff00ff00RandomGreeting:|r Nutze |cff00ccff/rhi|r und |cff00ccff/rbye|r. Hilfe mit /rhi help.")
+        print("|cff00ff00RandomGreeting:|r Nutze |cff00ccff/rhi|r und |cff00ccff/rbye|r. Hilfe mit /rhi help oder /rbye help")
         self:UnregisterEvent("ADDON_LOADED")
     end
 end)
