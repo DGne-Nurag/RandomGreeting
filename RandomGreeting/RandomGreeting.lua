@@ -129,21 +129,3 @@ SLASH_RANDOMBYE1 = "/rbye"
 SlashCmdList["RANDOMBYE"] = function(msg) 
     HandleCommand(msg, RandomGreetingDB.byeMessages, RandomGreetingDB.byePool, "Abschied", "/rbye") 
 end
-
--- ==========================================================
--- 5. TAB-AUTOCOMPLETE
--- ==========================================================
-local subCommands = {"list", "add", "remove", "clear", "help", "s", "g", "p", "r"}
-hooksecurefunc("ChatEdit_CustomTabCompleteExecute", function(editBox)
-    local text = editBox:GetText()
-    local cmdUsed = text:match("^(/%S+)")
-    if cmdUsed == "/rhi" or cmdUsed == "/rbye" then
-        local rest = text:match("^/%S+%s*(.*)$") or ""
-        for _, suggestion in ipairs(subCommands) do
-            if suggestion:find("^" .. rest:lower()) then
-                editBox:SetText(cmdUsed .. " " .. suggestion .. " ")
-                return
-            end
-        end
-    end
-end)
