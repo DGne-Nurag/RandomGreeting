@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RandomGreeting v2 – Import Generator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #1a1a2e; --surface: #16213e; --card: #0f3460;
+      --accent: #e94560; --accent2: #00ccff;
+      --text: #e0e0e0; --muted: #8899aa; --border: #2a3a5e;
+      --green: #00ff88; --radius: 8px;
+    }
+    body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2rem 1rem; }
+    header { text-align: center; margin-bottom: 2.5rem; position: relative; }
+    header h1 { font-size: 2rem; color: var(--accent2); letter-spacing: 1px; }
+    header p { color: var(--muted); margin-top: .4rem; font-size: .95rem; }
+
+    /* Language switcher */
+    .lang-switcher { position: absolute; top: 0; right: 0; display: flex; gap: .4rem; }
+    .lang-btn {
+      padding: .3rem .75rem; border: 2px solid var(--border); border-radius: var(--radius);
+      background: var(--surface); color: var(--muted); cursor: pointer; font-size: .85rem; font-weight: 700;
+      transition: all .2s;
+    }
+    .lang-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+    .lang-btn.active { background: var(--card); border-color: var(--accent2); color: var(--accent2); }
+
+    .container { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .tab-btn { padding: .55rem 1.4rem; border: 2px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--muted); cursor: pointer; font-size: .95rem; font-weight: 600; transition: all .2s; }
+    .tab-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+    .tab-btn.active { background: var(--card); border-color: var(--accent2); color: var(--accent2); }
+
+    /* Cards */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+    .card h2 { font-size: 1.1rem; color: var(--accent2); margin-bottom: 1rem; }
+    label { display: block; font-size: .85rem; color: var(--muted); margin-bottom: .35rem; }
+    textarea { width: 100%; height: 220px; background: #0d1b2e; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: .95rem; padding: .8rem; resize: vertical; outline: none; transition: border-color .2s; font-family: "Consolas", "Courier New", monospace; }
+    textarea:focus { border-color: var(--accent2); }
+    textarea::placeholder { color: var(--muted); }
+
+    .info-box { background: #0d1b2e; border-left: 3px solid var(--accent2); border-radius: 0 var(--radius) var(--radius) 0; padding: .75rem 1rem; font-size: .87rem; color: var(--muted); margin-bottom: 1rem; }
+    .info-box strong { color: var(--text); }
+
+    /* Buttons */
+    .btn-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1rem; }
+    button.primary { padding: .6rem 1.6rem; background: var(--accent); border: none; border-radius: var(--radius); color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity .2s, transform .1s; }
+    button.primary:hover { opacity: .85; }
+    button.primary:active { transform: scale(.97); }
+    button.secondary { padding: .6rem 1.4rem; background: transparent; border: 2px solid var(--border); border-radius: var(--radius); color: var(--muted); font-size: .95rem; cursor: pointer; transition: all .2s; }
+    button.secondary:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    /* Result */
+    #result-section { display: none; }
+    #result-section.visible { display: block; }
+    .result-box { position: relative; margin-top: .5rem; }
+    #result-string { width: 100%; height: 90px; background: #0d1b2e; border: 1px solid var(--green); border-radius: var(--radius); color: var(--green); font-family: "Consolas", "Courier New", monospace; font-size: .9rem; padding: .8rem 3rem .8rem .8rem; resize: none; outline: none; word-break: break-all; }
+    .copy-btn { position: absolute; top: .5rem; right: .5rem; background: var(--card); border: 1px solid var(--border); border-radius: 5px; padding: .3rem .7rem; color: var(--accent2); font-size: .8rem; cursor: pointer; transition: all .2s; }
+    .copy-btn:hover { background: var(--accent2); color: #000; }
+    .copy-btn.copied { background: var(--green); color: #000; border-color: var(--green); }
+    .usage-hint { margin-top: .8rem; background: #0d1b2e; border: 1px solid var(--border); border-radius: var(--radius); padding: .8rem 1rem; font-size: .88rem; color: var(--muted); }
+    .usage-hint code { background: #1a2a3e; border-radius: 4px; padding: .1em .45em; color: var(--accent2); font-family: "Consolas", monospace; }
+    .stat-row { display: flex; gap: 1rem; font-size: .85rem; color: var(--muted); margin-top: .5rem; }
+    .stat-row span { color: var(--green); font-weight: 700; }
+
+    /* Decode */
+    .decode-section { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .decode-section h2 { color: var(--muted); font-size: 1rem; }
+    footer { text-align: center; color: var(--muted); font-size: .82rem; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="setLang('de')">DE</button>
+    <button class="lang-btn"        onclick="setLang('en')">EN</button>
+  </div>
+  <h1 data-i18n="title">⚔ RandomGreeting v2 – Import Generator</h1>
+  <p data-i18n="subtitle"></p>
+</header>
+
+<div class="container">
+
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-list="HI"      onclick="selectTab(this)" data-i18n-tab="HI"></button>
+    <button class="tab-btn"        data-list="BYE"     onclick="selectTab(this)" data-i18n-tab="BYE"></button>
+    <button class="tab-btn"        data-list="CUSTOM1" onclick="selectTab(this)" data-i18n-tab="CUSTOM1"></button>
+    <button class="tab-btn"        data-list="CUSTOM2" onclick="selectTab(this)" data-i18n-tab="CUSTOM2"></button>
+  </div>
+
+  <div class="card">
+    <h2 id="card-title"></h2>
+    <div class="info-box">
+      <strong data-i18n="tipLabel"></strong>
+      <span data-i18n="tipText"></span>
+    </div>
+    <label for="messages-input" data-i18n="inputLabel"></label>
+    <textarea id="messages-input"></textarea>
+    <div class="btn-row">
+      <button class="primary"   onclick="generate()"     data-i18n="btnGenerate"></button>
+      <button class="secondary" onclick="clearInput()"   data-i18n="btnClear"></button>
+      <button class="secondary" onclick="loadExample()"  data-i18n="btnExample"></button>
+    </div>
+  </div>
+
+  <div class="card" id="result-section">
+    <h2 data-i18n="resultTitle"></h2>
+    <div class="stat-row">
+      <div><span data-i18n="statEntries"></span>: <span id="stat-count">0</span></div>
+      <div><span data-i18n="statList"></span>: <span id="stat-list">HI</span></div>
+    </div>
+    <div class="result-box" style="margin-top:.75rem">
+      <textarea id="result-string" readonly></textarea>
+      <button class="copy-btn" id="copy-btn" onclick="copyResult()" data-i18n="btnCopy"></button>
+    </div>
+    <div class="usage-hint" id="usage-hint"></div>
+  </div>
+
+  <div class="card decode-section">
+    <h2 data-i18n="decodeTitle"></h2>
+    <label for="decode-input" data-i18n="decodeLabel"></label>
+    <textarea id="decode-input" style="height:80px" placeholder="RG2:BYE:..."></textarea>
+    <div class="btn-row">
+      <button class="secondary" onclick="decode()" data-i18n="btnDecode"></button>
+    </div>
+    <div id="decode-result" style="margin-top:1rem"></div>
+  </div>
+
+</div>
+
+<footer>
+  RandomGreeting v2 &bull; WoW Classic / TBC &bull;
+  <code style="color:var(--accent2)">RG2:LIST:Entry1;;Entry2</code>
+</footer>
+
+<script>
+// =============================================================
+// ÜBERSETZUNGEN
+// =============================================================
+const I18N = {
+  de: {
+    title:       "⚔ RandomGreeting v2 – Import Generator",
+    subtitle:    "Erstelle Import-Strings für dein WoW Classic / TBC Addon",
+    tabs: {
+      HI:      "🗣 /rhi \u00a0(Begrüßung)",
+      BYE:     "👋 /rbye \u00a0(Abschied)",
+      CUSTOM1: "⚙ /rcustom1",
+      CUSTOM2: "⚙ /rcustom2",
+    },
+    cardTitle:   (slash) => `Nachrichten für <code style="color:var(--accent2)">${slash}</code> eingeben`,
+    tipLabel:    "Tipp:",
+    tipText:     " Eine Nachricht pro Zeile. Leerzeilen werden ignoriert. WoW-Farbcodes wie |cffff0000Rot|r sind erlaubt.",
+    inputLabel:  "Deine Nachrichten:",
+    inputPlaceholder: "Huhu!\nHallöchen!\nMoinsen!\nBlut und Donner!",
+    btnGenerate: "⚡ Importstring generieren",
+    btnClear:    "✕ Leeren",
+    btnExample:  "📋 Beispiel laden",
+    resultTitle: "✅ Dein Importstring",
+    statEntries: "Einträge",
+    statList:    "Liste",
+    btnCopy:     "Kopieren",
+    btnCopied:   "✓ Kopiert!",
+    usageHint:   (slash, list) =>
+      `<strong>In WoW einfügen:</strong><br>
+       <code>${slash} import &lt;string&gt;</code> – direkt importieren<br>
+       <code>/rg import &lt;string&gt;</code> – automatische Listenerkennung<br><br>
+       <strong>Bestehende Liste behalten?</strong> Import <em>fügt hinzu</em>.
+       Vorher leeren mit <code>${slash} clear confirm</code>.`,
+    decodeTitle:  "🔍 Importstring dekodieren (Vorschau)",
+    decodeLabel:  "Importstring einfügen:",
+    btnDecode:    "Dekodieren",
+    alertEmpty:   "Bitte mindestens eine Nachricht eingeben.",
+    confirmSep:   'Einige Einträge enthalten ";;" – das ist das Trennzeichen des Importformats und wird aufgeteilt. Trotzdem generieren?',
+    decodeError:  "⚠ Ungültiges Format. Erwartet: RG2:LISTE:Eintrag1;;Eintrag2",
+    decodeEntries: "Einträge",
+  },
+  en: {
+    title:       "⚔ RandomGreeting v2 – Import Generator",
+    subtitle:    "Generate import strings for your WoW Classic / TBC Addon",
+    tabs: {
+      HI:      "🗣 /rhi \u00a0(Greeting)",
+      BYE:     "👋 /rbye \u00a0(Farewell)",
+      CUSTOM1: "⚙ /rcustom1",
+      CUSTOM2: "⚙ /rcustom2",
+    },
+    cardTitle:   (slash) => `Enter messages for <code style="color:var(--accent2)">${slash}</code>`,
+    tipLabel:    "Tip:",
+    tipText:     " One message per line. Empty lines are ignored. WoW color codes like |cffff0000Red|r are supported.",
+    inputLabel:  "Your messages:",
+    inputPlaceholder: "Greetings!\nWell met!\nHowdy, partner!\nBlood and Thunder!",
+    btnGenerate: "⚡ Generate import string",
+    btnClear:    "✕ Clear",
+    btnExample:  "📋 Load example",
+    resultTitle: "✅ Your import string",
+    statEntries: "Entries",
+    statList:    "List",
+    btnCopy:     "Copy",
+    btnCopied:   "✓ Copied!",
+    usageHint:   (slash, list) =>
+      `<strong>Paste into WoW:</strong><br>
+       <code>${slash} import &lt;string&gt;</code> – import directly<br>
+       <code>/rg import &lt;string&gt;</code> – auto list detection<br><br>
+       <strong>Keep existing entries?</strong> Import <em>appends</em>.
+       Clear first with <code>${slash} clear confirm</code>.`,
+    decodeTitle:  "🔍 Decode import string (preview)",
+    decodeLabel:  "Paste import string:",
+    btnDecode:    "Decode",
+    alertEmpty:   "Please enter at least one message.",
+    confirmSep:   'Some entries contain ";;" – this is the separator of the import format and will be split. Generate anyway?',
+    decodeError:  "⚠ Invalid format. Expected: RG2:LIST:Entry1;;Entry2",
+    decodeEntries: "entries",
+  },
+};
+
+// =============================================================
+// BEISPIELE (nach Sprache)
+// =============================================================
+const EXAMPLES = {
+  de: {
+    HI:      ["Huhu!", "Hallöchen Popöchen!", "Moinsen!", "Seid gegrüßt!", "Blut und Donner!", "Das Licht sei mit euch.", "Lok'tar!"],
+    BYE:     ["Tschüsseldorf", "Ciao Kakao", "Sayonara Carbonara", "Bis Spätersilie", "Adieu Mathieu", "Goodbayern", "Tschüssi mit üssi"],
+    CUSTOM1: ["Achtung, Hexerportal nach Shattrath!", "Portal wird geöffnet – 5 Sekunden!", "Wer mit will: jetzt anklicken!", "Mal eben portalen, einen Moment bitte."],
+    CUSTOM2: ["LFG – Scholomance, bin Tank!", "Suche Heiler für Scholo, 4/5.", "LFM für ZG, brauchen noch 2 DDs!", "RFC Gruppe gesucht, lvl 15."],
+  },
+  en: {
+    HI:      ["Greetings!", "Well met!", "Howdy, partner!", "Ahoy, Mateys!", "Blood and Thunder!", "Light be with you.", "Lok'tar!"],
+    BYE:     ["Farewell!", "Safe travels!", "Until next time!", "Don't let the murlocs bite!", "For the Horde!", "Cheers!", "See you around!"],
+    CUSTOM1: ["Warlock portal to Shattrath - step right up!", "Portal opening in 5 seconds!", "Portal up – click now!", "One moment, opening a portal."],
+    CUSTOM2: ["LFG – Scholomance, playing tank!", "Need healer for Scholo, 4/5.", "LFM for ZG, need 2 more DPS!", "RFC group wanted, lvl 15."],
+  },
+};
+
+// =============================================================
+// STATE
+// =============================================================
+let currentLang = (navigator.language || "en").startsWith("de") ? "de" : "en";
+let currentList = "HI";
+
+const SLASH_MAP = { HI: "/rhi", BYE: "/rbye", CUSTOM1: "/rcustom1", CUSTOM2: "/rcustom2" };
+
+// =============================================================
+// i18n KERN
+// =============================================================
+function t(key) { return I18N[currentLang][key] ?? I18N["en"][key] ?? key; }
+
+function applyTranslations() {
+  const L = I18N[currentLang];
+  document.documentElement.lang = currentLang;
+
+  // data-i18n Elemente
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.dataset.i18n;
+    if (key === "title") { el.textContent = L.title; }
+    else if (L[key] !== undefined) { el.textContent = L[key]; }
+  });
+
+  // Tab-Buttons
+  document.querySelectorAll("[data-i18n-tab]").forEach(el => {
+    el.textContent = L.tabs[el.dataset.i18nTab] ?? el.dataset.i18nTab;
+  });
+
+  // Card-Titel mit aktivem Slash
+  document.getElementById("card-title").innerHTML = L.cardTitle(SLASH_MAP[currentList]);
+
+  // Textarea-Placeholder
+  document.getElementById("messages-input").placeholder = L.inputPlaceholder;
+
+  // Usage-Hint (falls Ergebnisbereich sichtbar)
+  document.getElementById("usage-hint").innerHTML = L.usageHint(SLASH_MAP[currentList], currentList);
+
+  // Sprach-Buttons active-State
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.textContent.toLowerCase() === currentLang);
+  });
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  applyTranslations();
+}
+
+// =============================================================
+// TABS
+// =============================================================
+function selectTab(btn) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  currentList = btn.dataset.list;
+  const L = I18N[currentLang];
+  document.getElementById("card-title").innerHTML = L.cardTitle(SLASH_MAP[currentList]);
+  document.getElementById("usage-hint").innerHTML = L.usageHint(SLASH_MAP[currentList], currentList);
+  document.getElementById("result-section").classList.remove("visible");
+}
+
+// =============================================================
+// GENERIEREN
+// =============================================================
+function getLines() {
+  return document.getElementById("messages-input").value
+    .split("\n").map(l => l.trim()).filter(l => l.length > 0);
+}
+
+function generate() {
+  const L = I18N[currentLang];
+  const lines = getLines();
+  if (lines.length === 0) { alert(L.alertEmpty); return; }
+  if (lines.some(l => l.includes(";;")) && !confirm(L.confirmSep)) return;
+  const importStr = "RG2:" + currentList + ":" + lines.join(";;");
+  document.getElementById("result-string").value = importStr;
+  document.getElementById("stat-count").textContent = lines.length;
+  document.getElementById("stat-list").textContent = currentList;
+  const section = document.getElementById("result-section");
+  section.classList.add("visible");
+  section.scrollIntoView({ behavior: "smooth" });
+  resetCopyBtn();
+}
+
+function clearInput() {
+  document.getElementById("messages-input").value = "";
+  document.getElementById("result-section").classList.remove("visible");
+}
+
+function loadExample() {
+  document.getElementById("messages-input").value =
+    (EXAMPLES[currentLang][currentList] || []).join("\n");
+}
+
+// =============================================================
+// KOPIEREN
+// =============================================================
+function copyResult() {
+  const L = I18N[currentLang];
+  const str = document.getElementById("result-string").value;
+  navigator.clipboard.writeText(str).then(() => {
+    const btn = document.getElementById("copy-btn");
+    btn.textContent = L.btnCopied;
+    btn.classList.add("copied");
+    setTimeout(resetCopyBtn, 2500);
+  }).catch(() => {
+    document.getElementById("result-string").select();
+    document.execCommand("copy");
+  });
+}
+
+function resetCopyBtn() {
+  const btn = document.getElementById("copy-btn");
+  btn.textContent = I18N[currentLang].btnCopy;
+  btn.classList.remove("copied");
+}
+
+// =============================================================
+// DEKODIEREN
+// =============================================================
+function decode() {
+  const L = I18N[currentLang];
+  const raw = document.getElementById("decode-input").value.trim();
+  const out = document.getElementById("decode-result");
+  const m = raw.match(/^RG2:(\w+):(.+)$/);
+  if (!m) {
+    out.innerHTML = `<span style="color:var(--accent)">${L.decodeError}</span>`;
+    return;
+  }
+  const listKey = m[1];
+  const entries = m[2].split(";;").map(e => e.trim()).filter(e => e.length > 0);
+  let html = `<div style="color:var(--muted);font-size:.88rem;margin-bottom:.6rem">
+    ${L.statList}: <strong style="color:var(--accent2)">${listKey}</strong> &bull;
+    <strong style="color:var(--green)">${entries.length}</strong> ${L.decodeEntries}
+  </div><ol style="padding-left:1.4rem;display:flex;flex-direction:column;gap:.3rem">`;
+  entries.forEach(e => {
+    html += `<li style="font-size:.9rem;color:var(--text)">${escHtml(e)}</li>`;
+  });
+  html += "</ol>";
+  out.innerHTML = html;
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+// =============================================================
+// INIT
+// =============================================================
+applyTranslations();
+</script>
+</body>
+</html>
