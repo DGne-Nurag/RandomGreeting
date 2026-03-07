@@ -452,7 +452,8 @@
             'Einige Einträge enthalten ";;" – das ist das Trennzeichen des Importformats und wird aufgeteilt. Trotzdem generieren?',
           decodeError:
             "⚠ Ungültiges Format. Erwartet: RG2:LISTE:Eintrag1;;Eintrag2",
-          decodeEntries: "Einträge"
+          decodeEntries: "Einträge",
+          btnUseInEditor: "↑ In Editor übernehmen"
         },
         en: {
           title: "⚔ RandomGreeting v2 – Import Generator",
@@ -492,7 +493,8 @@
           confirmSep:
             'Some entries contain ";;" – this is the separator of the import format and will be split. Generate anyway?',
           decodeError: "⚠ Invalid format. Expected: RG2:LIST:Entry1;;Entry2",
-          decodeEntries: "entries"
+          decodeEntries: "entries",
+          btnUseInEditor: "↑ Use in editor"
         }
       };
 
@@ -573,6 +575,8 @@
         ? "de"
         : "en";
       let currentList = "HI";
+      let decodedEntries = [];
+      let decodedList = "HI";
 
       const SLASH_MAP = {
         HI: "/rhi",
@@ -748,7 +752,17 @@
           html += `<li style="font-size:.9rem;color:var(--text)">${escHtml(e)}</li>`;
         });
         html += "</ol>";
+        // Button zum Übernehmen in den Editor
+        html += `<div class="btn-row" style="margin-top:.9rem">
+    <button class="secondary" onclick="useDecoded('${listKey}', decodedEntries)">${L.btnUseInEditor}</button>
+  </div>`;
+        // Einträge für useDecoded merken
+        out._decodedEntries = entries;
+        out._decodedList = listKey;
         out.innerHTML = html;
+        // Referenz auf Entries über closure
+        decodedEntries = entries;
+        decodedList = listKey;
       }
 
       function escHtml(str) {
@@ -756,6 +770,24 @@
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;");
+      }
+
+      // =============================================================
+      // DECODED IN EDITOR ÜBERNEHMEN
+      // =============================================================
+      function useDecoded(listKey, entries) {
+        // Zum passenden Tab wechseln (falls vorhanden)
+        const tabBtn = document.querySelector(`[data-list="${listKey}"]`);
+        if (tabBtn) {
+          selectTab(tabBtn);
+        } else {
+          currentList = listKey;
+        }
+        document.getElementById("messages-input").value = entries.join("\n");
+        document
+          .getElementById("messages-input")
+          .scrollIntoView({ behavior: "smooth" });
+        document.getElementById("messages-input").focus();
       }
 
       // =============================================================
