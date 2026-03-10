@@ -19,6 +19,24 @@ local function CheckPool(pool, messages)
     end
 end
 
+--- Validates a persisted pool against the current message list.
+--- Removes indices that no longer exist and eliminates duplicates.
+--- This keeps the shuffle state across reloads/relogs.
+local function ValidatePool(pool, messages)
+    local valid = {}
+    local seen = {}
+    for _, idx in ipairs(pool) do
+        if messages[idx] and not seen[idx] then
+            table.insert(valid, idx)
+            seen[idx] = true
+        end
+    end
+    wipe(pool)
+    for _, idx in ipairs(valid) do
+        table.insert(pool, idx)
+    end
+end
+
 --- Splits a string at the ";;" separator.
 --- Returns a list of trimmed entries.
 local function SplitBySep(str)
@@ -267,23 +285,27 @@ f:SetScript("OnEvent", function(self, event, name)
     if #db.hiMessages == 0 then
         for _, v in ipairs(RG_DEFAULTS.hi) do table.insert(db.hiMessages, v) end
     end
-    db.hiPool = {}
+    db.hiPool = db.hiPool or {}
+    ValidatePool(db.hiPool, db.hiMessages)
 
     -- Farewells (/rbye)
     db.byeMessages = db.byeMessages or {}
     if #db.byeMessages == 0 then
         for _, v in ipairs(RG_DEFAULTS.bye) do table.insert(db.byeMessages, v) end
     end
-    db.byePool = {}
+    db.byePool = db.byePool or {}
+    ValidatePool(db.byePool, db.byeMessages)
 
     -- Custom 1 (/rcustom1) – empty by default
     db.custom1Messages = db.custom1Messages or {}
-    db.custom1Pool     = {}
+    db.custom1Pool     = db.custom1Pool or {}
+    ValidatePool(db.custom1Pool, db.custom1Messages)
     db.custom1Label    = db.custom1Label or RG_L["LABEL_CUSTOM1"]
 
     -- Custom 2 (/rcustom2) – empty by default
     db.custom2Messages = db.custom2Messages or {}
-    db.custom2Pool     = {}
+    db.custom2Pool     = db.custom2Pool or {}
+    ValidatePool(db.custom2Pool, db.custom2Messages)
     db.custom2Label    = db.custom2Label or RG_L["LABEL_CUSTOM2"]
 
     print("|cff00ff00" .. ADDON_NAME .. ":|r " .. RG_L["MSG_LOADED"])
