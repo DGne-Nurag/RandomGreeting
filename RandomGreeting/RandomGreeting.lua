@@ -37,6 +37,14 @@ local function ValidatePool(pool, messages)
     end
 end
 
+--- Shuffles a pool in-place using Fisher-Yates.
+local function ShufflePool(pool)
+    for i = #pool, 2, -1 do
+        local j = math.random(i)
+        pool[i], pool[j] = pool[j], pool[i]
+    end
+end
+
 --- Splits a string at the ";;" separator.
 --- Returns a list of trimmed entries.
 local function SplitBySep(str)
@@ -287,6 +295,7 @@ f:SetScript("OnEvent", function(self, event, name)
     end
     db.hiPool = db.hiPool or {}
     ValidatePool(db.hiPool, db.hiMessages)
+    ShufflePool(db.hiPool)
 
     -- Farewells (/rbye)
     db.byeMessages = db.byeMessages or {}
@@ -295,17 +304,20 @@ f:SetScript("OnEvent", function(self, event, name)
     end
     db.byePool = db.byePool or {}
     ValidatePool(db.byePool, db.byeMessages)
+    ShufflePool(db.byePool)
 
     -- Custom 1 (/rcustom1) – empty by default
     db.custom1Messages = db.custom1Messages or {}
     db.custom1Pool     = db.custom1Pool or {}
     ValidatePool(db.custom1Pool, db.custom1Messages)
+    ShufflePool(db.custom1Pool)
     db.custom1Label    = db.custom1Label or RG_L["LABEL_CUSTOM1"]
 
     -- Custom 2 (/rcustom2) – empty by default
     db.custom2Messages = db.custom2Messages or {}
     db.custom2Pool     = db.custom2Pool or {}
     ValidatePool(db.custom2Pool, db.custom2Messages)
+    ShufflePool(db.custom2Pool)
     db.custom2Label    = db.custom2Label or RG_L["LABEL_CUSTOM2"]
 
     print("|cff00ff00" .. ADDON_NAME .. ":|r " .. RG_L["MSG_LOADED"])
