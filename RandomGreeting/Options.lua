@@ -67,7 +67,7 @@ local function RefreshListRows()
         local msgIdx = offset + i
         if i <= visibleRows and msgIdx <= total then
             local text = msgs[msgIdx]
-            row.label:SetText(string.format("|cff00ccff[%d]|r %s", msgIdx, text))
+            row.label:SetText(text)
             row.deleteBtn.msgIdx = msgIdx
             row.fullText = text
             row:Show()
