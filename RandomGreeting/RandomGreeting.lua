@@ -59,7 +59,29 @@ local function SplitBySep(str)
 end
 
 -- ==========================================================
--- 2. IMPORT / EXPORT
+-- 2. LOCALE APPLICATION
+-- ==========================================================
+-- Copies the selected locale's strings into RG_L and RG_DEFAULTS.
+-- Called once in ADDON_LOADED (and again when the player changes language).
+
+local function ApplyLocale(lang)
+    local src = RG_LOCALES[lang]
+    if not src then lang = "enUS"; src = RG_LOCALES["enUS"] end
+    wipe(RG_L)
+    for k, v in pairs(src) do RG_L[k] = v end
+    local defSrc = RG_LOCALE_DEFAULTS[lang]
+    if defSrc then
+        wipe(RG_DEFAULTS.hi)
+        for _, v in ipairs(defSrc.hi)  do table.insert(RG_DEFAULTS.hi,  v) end
+        wipe(RG_DEFAULTS.bye)
+        for _, v in ipairs(defSrc.bye) do table.insert(RG_DEFAULTS.bye, v) end
+    end
+end
+
+RG_Internal.ApplyLocale = ApplyLocale
+
+-- ==========================================================
+-- 3. IMPORT / EXPORT
 -- ==========================================================
 --
 -- Format: RG2:<LISTE>:<Eintrag1>;;<Eintrag2>;;<Eintrag3>
@@ -108,11 +130,14 @@ local function ImportList(importStr, targetKey)
     end
     wipe(pool)
     print("|cff00ff00" .. string.format(RG_L["MSG_IMPORTED"], #entries, listKey) .. "|r")
+    if RG_Internal.RefreshOptionsPanel then
+        RG_Internal.RefreshOptionsPanel()
+    end
     return true
 end
 
 -- ==========================================================
--- 3. STRING DIALOG (Export / Import window)
+-- 4. STRING DIALOG (Export / Import window)
 -- ==========================================================
 -- Opens a WoW UI frame with an EditBox so the player can
 -- copy the export string or paste an import string.
@@ -277,7 +302,7 @@ local function ExportList(messages, listKey)
 end
 
 -- ==========================================================
--- 4. DATABASE & INITIALIZATION
+-- 5. DATABASE & INITIALIZATION
 -- ==========================================================
 
 local f = CreateFrame("Frame")
@@ -287,6 +312,15 @@ f:SetScript("OnEvent", function(self, event, name)
 
     RandomGreetingDB = RandomGreetingDB or {}
     local db = RandomGreetingDB
+
+    -- Apply locale (must happen before list init so RG_L and RG_DEFAULTS are ready)
+    do
+        local lang = db.locale or "auto"
+        if lang == "auto" then
+            lang = (GetLocale() == "deDE") and "deDE" or "enUS"
+        end
+        ApplyLocale(lang)
+    end
 
     -- Greetings (/rhi)
     db.hiMessages = db.hiMessages or {}
@@ -325,7 +359,7 @@ f:SetScript("OnEvent", function(self, event, name)
 end)
 
 -- ==========================================================
--- 5. COMMAND HANDLER (shared function)
+-- 6. COMMAND HANDLER (shared function)
 -- ==========================================================
 
 local function HandleCommand(msg, messages, pool, label, slash, listKey, defaultList)
@@ -436,6 +470,10 @@ local function HandleCommand(msg, messages, pool, label, slash, listKey, default
             print("|cffff0000" .. RG_L["ERR_NO_TEXT"] .. "|r")
         end
 
+    -- ---- OPTIONS ----
+    elseif cmd == "options" or cmd == "config" then
+        if RG_Internal.OpenOptions then RG_Internal.OpenOptions(listKey) end
+
     -- ---- SEND (no recognised subcommand = post message) ----
     else
         if #messages == 0 then
@@ -464,7 +502,7 @@ local function HandleCommand(msg, messages, pool, label, slash, listKey, default
 end
 
 -- ==========================================================
--- 6. SLASH COMMANDS
+-- 7. SLASH COMMANDS
 -- ==========================================================
 
 -- /rhi – Random greeting
@@ -514,6 +552,18 @@ SlashCmdList["RANDOMGREETING"] = function(msg)
             ShowImportDialog(nil)     -- nil = auto-detect from string
         end
     else
-        print("|cff00ff00RandomGreeting v2:|r " .. RG_L["MSG_LOADED"])
+        -- No subcommand: open the options panel
+        if RG_Internal.OpenOptions then
+            RG_Internal.OpenOptions(nil)
+        else
+            print("|cff00ff00RandomGreeting v2:|r " .. RG_L["MSG_LOADED"])
+        end
     end
 end
+
+-- ==========================================================
+-- 8. EXPOSE INTERNALS (for Options.lua)
+-- ==========================================================
+RG_Internal.ShowImportDialog = ShowImportDialog
+RG_Internal.ExportList       = ExportList
+RG_Internal.GetListByKey     = GetListByKey

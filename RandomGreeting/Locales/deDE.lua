@@ -1,13 +1,11 @@
 -- ==========================================================
 -- RandomGreeting v2 - Deutsch (deDE)
--- Wird nur geladen, wenn GetLocale() == "deDE".
--- Überschreibt nur die Strings, die lokalisiert werden sollen.
+-- Immer geladen (kein GetLocale()-Guard).
+-- Schreibt in RG_LOCALES["deDE"] – ApplyLocale() aktiviert die Sprache.
 -- ==========================================================
 
-if GetLocale() ~= "deDE" then return end
-
-local L = RG_L
-local D = RG_DEFAULTS
+local L = {}
+RG_LOCALES["deDE"] = L
 
 -- ----------------------------------------------------------
 -- UI-Strings (Deutsch)
@@ -64,33 +62,50 @@ L["DIALOG_IMPORT_BTN"]      = "Importieren"
 L["DIALOG_IMPORT_CLEAR"]    = "Liste vor Import leeren"
 L["DIALOG_CLOSE_BTN"]       = "Schließen"
 
+-- Options panel
+L["OPT_TITLE"]              = "RandomGreeting – Einstellungen"
+L["OPT_LANG_LABEL"]         = "Sprache:"
+L["OPT_LANG_AUTO"]          = "Automatisch (Client-Sprache)"
+L["OPT_LANG_ENUS"]          = "English"
+L["OPT_LANG_DEDE"]          = "Deutsch"
+L["OPT_LIST_LABEL"]         = "Aktive Liste:"
+L["OPT_IMPORT_BTN"]           = "Importieren..."
+L["OPT_EXPORT_BTN"]           = "Exportieren..."
+L["OPT_MESSAGES_TITLE"]       = "Nachrichten in dieser Liste:"
+L["OPT_DELETE_BTN"]           = "Löschen"
+L["OPT_RESET_BTN"]            = "Auf Standard zurücksetzen"
+L["OPT_GENERATOR_BTN"]        = "Import-Generator (extern)"
+L["OPT_GENERATOR_URL_TITLE"]  = "Import-Generator URL – kopieren und im Browser öffnen"
+L["OPT_ADD_BTN"]              = "Hinzufügen"
+
 -- ----------------------------------------------------------
 -- Standard-Nachrichten (Deutsch)
 -- ----------------------------------------------------------
-D.hi = {
-    "Huhu!", "Hallöchen Popöchen!", "Moinsen!", "Seid gegrüßt!",
-    "Blut und Donner!", "Das Licht sei mit euch.", "Moin Moin!",
-    "Na du?", "Herzlich Willkommen!", "Aloha!", "Ahoi, Matrosen!",
-    "Lok'tar!", "Ishnu-alah!", "Grüß Gott!", "Tach auch!",
-    "Na, wie geht's?", "Auf in den Kampf!", "Heil und Segen!",
-}
-
-D.bye = {
-    "Ciao for now", "Tschüsseldorf", "Adios Amigos", "Tschüssikowski",
-    "San Frantschüssko", "Tschüsli Müsli", "Tschüssing", "Ciao Kakao",
-    "Tschüssinger", "Ciao mit Au", "Bis Baldrian", "Ciaokelstuhl",
-    "Bis dannimannski", "Bis Danzig", "Bis Denver", "Wirsing",
-    "Bis denne, Antenne", "Hastalavista, Mister", "Tüdelü",
-    "Bye Bye, Butterfly", "Hau rein, Brian",
-    "Mach's gut, aber nicht zu oft", "Paris, Athen, auf Wiedersehn",
-    "Tschüssen", "Ciao panthao", "Ciao Miau", "Bis dann, Hermann",
-    "Mach's gut, ich machs besser", "Hau Reinhardt",
-    "Man sieht sich. Wir ham ja Augen", "Bye Bye Kartoffelbrei",
-    "Mach's gut, Schwing den Hut", "Ciao du Pfau", "Tschüssilinski",
-    "Sayonara Carbonara", "Hau rein, du Stein", "Ade war schee",
-    "Tudelu Känguru", "See you soon Sailor Moon", "Adieu Mathieu",
-    "Rammel den Björn, auf wiederhörn", "Ferrero Tschüsschen",
-    "Bundesgartenciao", "Bis Spätersilie", "Tchövapcici",
-    "Auf Wirsing", "Goodbayern", "Machs Gucci",
-    "Ciao mit V", "Auf Videosehen", "Tschüssi mit üssi",
+RG_LOCALE_DEFAULTS["deDE"] = {
+    hi = {
+        "Huhu!", "Hallöchen Popöchen!", "Moinsen!", "Seid gegrüßt!",
+        "Blut und Donner!", "Das Licht sei mit euch.", "Moin Moin!",
+        "Na du?", "Herzlich Willkommen!", "Aloha!", "Ahoi, Matrosen!",
+        "Lok'tar!", "Ishnu-alah!", "Grüß Gott!", "Tach auch!",
+        "Na, wie geht's?", "Auf in den Kampf!", "Heil und Segen!",
+    },
+    bye = {
+        "Ciao for now", "Tschüsseldorf", "Adios Amigos", "Tschüssikowski",
+        "San Frantschüssko", "Tschüsli Müsli", "Tschüssing", "Ciao Kakao",
+        "Tschüssinger", "Ciao mit Au", "Bis Baldrian", "Ciaokelstuhl",
+        "Bis dannimannski", "Bis Danzig", "Bis Denver", "Wirsing",
+        "Bis denne, Antenne", "Hastalavista, Mister", "Tüdelü",
+        "Bye Bye, Butterfly", "Hau rein, Brian",
+        "Mach's gut, aber nicht zu oft", "Paris, Athen, auf Wiedersehn",
+        "Tschüssen", "Ciao panthao", "Ciao Miau", "Bis dann, Hermann",
+        "Mach's gut, ich machs besser", "Hau Reinhardt",
+        "Man sieht sich. Wir ham ja Augen", "Bye Bye Kartoffelbrei",
+        "Mach's gut, Schwing den Hut", "Ciao du Pfau", "Tschüssilinski",
+        "Sayonara Carbonara", "Hau rein, du Stein", "Ade war schee",
+        "Tudelu Känguru", "See you soon Sailor Moon", "Adieu Mathieu",
+        "Rammel den Björn, auf wiederhörn", "Ferrero Tschüsschen",
+        "Bundesgartenciao", "Bis Spätersilie", "Tchövapcici",
+        "Auf Wirsing", "Goodbayern", "Machs Gucci",
+        "Ciao mit V", "Auf Videosehen", "Tschüssi mit üssi",
+    },
 }

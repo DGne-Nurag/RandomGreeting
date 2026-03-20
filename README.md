@@ -66,7 +66,7 @@ All four lists share the same sub-commands. Replace `/rhi` with `/rbye`, `/rcust
 ## 💾 Technical Info
 
 - **SavedVariables:** `RandomGreetingDB` (account-wide — persists across characters and updates)
-- **Supports:** Classic Era (1.15), Season of Discovery, Cataclysm Classic, and Retail (The War Within)
+- **Supports:** Classic Era / Classic Hardcore (1.15.x) and TBC Anniversary (2.5.x) — tested and verified on these versions
 - **No libraries required** — pure Lua, zero dependencies
 
 **Make your greetings memorable with RandomGreeting!**

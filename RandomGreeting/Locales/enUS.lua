@@ -1,11 +1,11 @@
 -- ==========================================================
 -- RandomGreeting v2 - English (enUS) - Default / Fallback
--- Always loaded first; sets all strings.
--- Other locale files only override what they want to change.
+-- Always loaded; writes into RG_LOCALES["enUS"].
+-- ApplyLocale() copies the selected locale into RG_L at runtime.
 -- ==========================================================
 
-local L = RG_L
-local D = RG_DEFAULTS
+local L = {}
+RG_LOCALES["enUS"] = L
 
 -- ----------------------------------------------------------
 -- UI-Strings
@@ -62,21 +62,38 @@ L["DIALOG_IMPORT_BTN"]      = "Import"
 L["DIALOG_IMPORT_CLEAR"]    = "Clear list before import"
 L["DIALOG_CLOSE_BTN"]       = "Close"
 
+-- Options panel
+L["OPT_TITLE"]              = "RandomGreeting – Options"
+L["OPT_LANG_LABEL"]         = "Language:"
+L["OPT_LANG_AUTO"]          = "Auto (client language)"
+L["OPT_LANG_ENUS"]          = "English"
+L["OPT_LANG_DEDE"]          = "Deutsch"
+L["OPT_LIST_LABEL"]         = "Active list:"
+L["OPT_IMPORT_BTN"]           = "Import..."
+L["OPT_EXPORT_BTN"]           = "Export..."
+L["OPT_MESSAGES_TITLE"]       = "Messages in this list:"
+L["OPT_DELETE_BTN"]           = "Del"
+L["OPT_RESET_BTN"]            = "Reset to defaults"
+L["OPT_GENERATOR_BTN"]        = "Import Generator (external)"
+L["OPT_GENERATOR_URL_TITLE"]  = "Import Generator URL – copy & open in browser"
+L["OPT_ADD_BTN"]              = "Add"
+
 -- ----------------------------------------------------------
 -- Default messages (English)
 -- ----------------------------------------------------------
-D.hi = {
-    "Greetings!", "Well met!", "Howdy, partner!", "Ahoy, Mateys!",
-    "Hello there!", "Salutations!", "What's up?", "Hey hey!",
-    "Good day to you!", "Aloha!", "Blood and Thunder!",
-    "Light be with you.", "Ishnu-alah!", "Lok'tar!", "Zug zug!",
-    "Stay a while and listen.", "Greetings, traveler!", "Good to see you!",
-}
-
-D.bye = {
-    "Farewell!", "Safe travels!", "Until next time!", "See you around!",
-    "Goodbye!", "Later!", "Take care!", "See you on the other side!",
-    "May the Light guide you.", "Be well!", "Cheers!", "Toodles!",
-    "Catch you later!", "Peace out!", "Until we meet again!",
-    "Don't let the murlocs bite!", "For the Horde!", "For the Alliance!",
+RG_LOCALE_DEFAULTS["enUS"] = {
+    hi = {
+        "Greetings!", "Well met!", "Howdy, partner!", "Ahoy, Mateys!",
+        "Hello there!", "Salutations!", "What's up?", "Hey hey!",
+        "Good day to you!", "Aloha!", "Blood and Thunder!",
+        "Light be with you.", "Ishnu-alah!", "Lok'tar!", "Zug zug!",
+        "Stay a while and listen.", "Greetings, traveler!", "Good to see you!",
+    },
+    bye = {
+        "Farewell!", "Safe travels!", "Until next time!", "See you around!",
+        "Goodbye!", "Later!", "Take care!", "See you on the other side!",
+        "May the Light guide you.", "Be well!", "Cheers!", "Toodles!",
+        "Catch you later!", "Peace out!", "Until we meet again!",
+        "Don't let the murlocs bite!", "For the Horde!", "For the Alliance!",
+    },
 }
