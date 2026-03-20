@@ -147,7 +147,7 @@ local function BuildOptionsPanel()
 
     local versionFS = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
     versionFS:SetPoint("TOPLEFT", titleFS, "BOTTOMLEFT", 0, -4)
-    versionFS:SetText("v2.3.0")
+    versionFS:SetText("v" .. (GetAddOnMetadata(ADDON_NAME, "Version") or "?"))
 
     ---------- Language dropdown ----------
     local langLabel = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")

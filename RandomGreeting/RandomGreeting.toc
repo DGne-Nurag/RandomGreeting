@@ -1,7 +1,7 @@
 ## Interface: 11508, 20505
 ## Title: RandomGreeting
 ## Notes: Posts random messages without repeats. Multilingual, importable lists, custom commands.
-## Version: 2.3.0
+## Version: 2.3.1
 ## IconTexture: Interface\AddOns\RandomGreeting\Media\logo
 ## SavedVariables: RandomGreetingDB
 
