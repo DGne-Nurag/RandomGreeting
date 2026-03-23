@@ -27,6 +27,21 @@ Use the **[Import Generator](https://dgne-nurag.github.io/RandomGreeting/)** to 
 
 Add, remove, or reset messages at any time without leaving the game. Restore the built-in defaults for `/rhi` and `/rbye` with a single command.
 
+**Minimap Button**
+
+A small icon on the minimap gives you quick access to everything:
+- **Left-click** — toggle the Action Window open/closed
+- **Right-click** — open the Options panel
+- **Drag** — reposition the button around the minimap
+
+**Action Window**
+
+A compact floating window right in your game UI. Click a button to instantly post a random message from the corresponding list — no commands needed. The window is freely draggable and remembers its position **per character**.
+
+- Toggle individual list buttons (Hi, Bye, Custom 1, Custom 2) on or off in the Options panel
+- Cycle through channels (Say / Guild / Party / Raid) directly in the window
+- **Compact mode** — halves the window width and uses short labels (Hi / Bye / C1 / C2) and single-letter channel codes (S / G / P / R) for a minimal footprint
+
 **Huge Starter Pack**
 
 Ships with 50+ hilarious German and English greetings and farewells. A few examples:
@@ -61,11 +76,15 @@ All four lists share the same sub-commands. Replace `/rhi` with `/rbye`, `/rcust
 **Global import shortcut:**
 `/rg import [string]` — auto-detects the target list and imports into the correct slot.
 
+**Options panel:**
+`/rg options` — opens the Options panel (or right-click the minimap button).
+
 ---
 
 ## 💾 Technical Info
 
-- **SavedVariables:** `RandomGreetingDB` (account-wide — persists across characters and updates)
+- **SavedVariables:** `RandomGreetingDB` (account-wide — messages, settings, minimap position)
+- **SavedVariablesPerCharacter:** `RandomGreetingCharDB` (per character — Action Window position)
 - **Supports:** Classic Era / Classic Hardcore (1.15.x) and TBC Anniversary (2.5.x) — tested and verified on these versions
 - **No libraries required** — pure Lua, zero dependencies
 
