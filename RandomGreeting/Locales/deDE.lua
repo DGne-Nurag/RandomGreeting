@@ -89,6 +89,10 @@ L["MINIMAP_TT_DRAG"]          = "Ziehen: Button verschieben"
 
 -- Aktionsfenster
 L["AWF_CHANNEL"]              = "Kanal"
+L["CHANNEL_SAY"]              = "Sagen"
+L["CHANNEL_GUILD"]             = "Gilde"
+L["CHANNEL_PARTY"]             = "Gruppe"
+L["CHANNEL_RAID"]              = "Schlachtzug"
 
 -- Optionen – Aktionsfenster-Abschnitt
 L["OPT_AW_TITLE"]             = "Aktionsfenster:"

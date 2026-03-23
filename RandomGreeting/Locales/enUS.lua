@@ -89,6 +89,10 @@ L["MINIMAP_TT_DRAG"]          = "Drag: Reposition button"
 
 -- Action window
 L["AWF_CHANNEL"]              = "Channel"
+L["CHANNEL_SAY"]              = "Say"
+L["CHANNEL_GUILD"]             = "Guild"
+L["CHANNEL_PARTY"]             = "Party"
+L["CHANNEL_RAID"]              = "Raid"
 
 -- Options – action window section
 L["OPT_AW_TITLE"]             = "Action Window:"

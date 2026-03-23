@@ -171,7 +171,8 @@ local function ChannelLabel(ch)
     if RandomGreetingCharDB and RandomGreetingCharDB.actionWindowCompact then
         return (CHANNEL_COLOR[ch] or "") .. (CHANNEL_SHORT[ch] or ch) .. "|r"
     end
-    return (CHANNEL_COLOR[ch] or "") .. (ch or "?") .. "|r"
+    local label = (RG_L and RG_L["CHANNEL_" .. (ch or "")] ) or CHANNEL_DISPLAY[ch] or ch or "?"
+    return (CHANNEL_COLOR[ch] or "") .. label .. "|r"
 end
 
 -- ==========================================================
@@ -303,8 +304,9 @@ local function RebuildAWFButtons()
         -- Tooltip im Kompaktmodus: voller Kanalname
         AW_ChBtn:SetScript("OnEnter", function(self)
             if IsCompact() then
+                local ch = GetChannel()
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(CHANNEL_DISPLAY[GetChannel()] or GetChannel(), 1, 1, 1)
+                GameTooltip:SetText((RG_L and RG_L["CHANNEL_" .. ch]) or CHANNEL_DISPLAY[ch] or ch, 1, 1, 1)
                 GameTooltip:Show()
             end
         end)
@@ -387,7 +389,7 @@ local function BuildActionWindow()
         self:SetText(ChannelLabel(nxt))
         -- Tooltip aktualisieren, falls er gerade sichtbar ist (Maus noch auf Button)
         if IsCompact() and GameTooltip:IsOwned(self) then
-            GameTooltip:SetText(nxt, 1, 1, 1)
+            GameTooltip:SetText((RG_L and RG_L["CHANNEL_" .. nxt]) or CHANNEL_DISPLAY[nxt] or nxt, 1, 1, 1)
         end
     end)
     AW_ChBtn = chBtn
@@ -458,7 +460,7 @@ local function BuildMinimapButton()
     -- Icon: .png explizit angeben (WoW sucht sonst nur .blp/.tga)
     -- Für Classic Era < 1.15: minimap.tga stattdessen ablegen.
     local icon = btn:CreateTexture(nil, "BACKGROUND")
-    icon:SetTexture("Interface\\AddOns\\RandomGreeting\\Media\\minimap.png")
+    icon:SetTexture("Interface\\AddOns\\RandomGreeting\\Media\\minimap.tga")
     icon:SetSize(22, 22)
     icon:SetPoint("CENTER", 0, 0)
     btn.icon = icon
