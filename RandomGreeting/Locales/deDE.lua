@@ -74,9 +74,22 @@ L["OPT_EXPORT_BTN"]           = "Exportieren..."
 L["OPT_MESSAGES_TITLE"]       = "Nachrichten in dieser Liste:"
 L["OPT_DELETE_BTN"]           = "Löschen"
 L["OPT_RESET_BTN"]            = "Auf Standard zurücksetzen"
+L["OPT_RESET_POS_BTN"]        = "Fensterposition zurücksetzen"
 L["OPT_GENERATOR_BTN"]        = "Import-Generator (extern)"
 L["OPT_GENERATOR_URL_TITLE"]  = "Import-Generator URL – kopieren und im Browser öffnen"
 L["OPT_ADD_BTN"]              = "Hinzufügen"
+
+-- Minimap-Button
+L["MINIMAP_TT_LEFT"]          = "Linksklick: Aktionsfenster ein-/ausblenden"
+L["MINIMAP_TT_RIGHT"]         = "Rechtsklick: Einstellungen öffnen"
+L["MINIMAP_TT_DRAG"]          = "Ziehen: Button verschieben"
+
+-- Aktionsfenster
+L["AWF_CHANNEL"]              = "Kanal"
+
+-- Optionen – Aktionsfenster-Abschnitt
+L["OPT_AW_TITLE"]             = "Aktionsfenster:"
+L["OPT_AW_COMPACT"]           = "Kompaktmodus"
 
 -- ----------------------------------------------------------
 -- Standard-Nachrichten (Deutsch)

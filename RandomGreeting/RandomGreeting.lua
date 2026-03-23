@@ -466,6 +466,7 @@ local function HandleCommand(msg, messages, pool, label, slash, listKey, default
                 RandomGreetingDB.custom2Label = newLabel
             end
             print("|cff00ff00" .. string.format(RG_L["MSG_LABEL_SET"], newLabel) .. "|r")
+            if RG_Internal.RebuildActionWindow then RG_Internal.RebuildActionWindow() end
         else
             print("|cffff0000" .. RG_L["ERR_NO_TEXT"] .. "|r")
         end

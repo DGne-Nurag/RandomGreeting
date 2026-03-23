@@ -74,9 +74,22 @@ L["OPT_EXPORT_BTN"]           = "Export..."
 L["OPT_MESSAGES_TITLE"]       = "Messages in this list:"
 L["OPT_DELETE_BTN"]           = "Del"
 L["OPT_RESET_BTN"]            = "Reset to defaults"
+L["OPT_RESET_POS_BTN"]        = "Reset Window position"
 L["OPT_GENERATOR_BTN"]        = "Import Generator (external)"
 L["OPT_GENERATOR_URL_TITLE"]  = "Import Generator URL – copy & open in browser"
 L["OPT_ADD_BTN"]              = "Add"
+
+-- Minimap button
+L["MINIMAP_TT_LEFT"]          = "Left-click: Toggle action window"
+L["MINIMAP_TT_RIGHT"]         = "Right-click: Open options"
+L["MINIMAP_TT_DRAG"]          = "Drag: Reposition button"
+
+-- Action window
+L["AWF_CHANNEL"]              = "Channel"
+
+-- Options – action window section
+L["OPT_AW_TITLE"]             = "Action Window:"
+L["OPT_AW_COMPACT"]           = "Compact mode"
 
 -- ----------------------------------------------------------
 -- Default messages (English)

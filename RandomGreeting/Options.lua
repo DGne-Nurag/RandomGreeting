@@ -196,9 +196,83 @@ local function BuildOptionsPanel()
         UIDropDownMenu_SetText(langDD, GetLangText("auto"))
     end)
 
+    ---------- Reset action window position ----------
+    local awResetPosBtn = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+    awResetPosBtn:SetSize(200, 26)
+    awResetPosBtn:SetPoint("LEFT", langResetBtn, "RIGHT", 6, 0)
+    awResetPosBtn:SetText(RG_L["OPT_RESET_POS_BTN"] or "Reset Window position")
+    awResetPosBtn:SetScript("OnClick", function()
+        RandomGreetingCharDB.actionWindowPos = false
+        local f = _G["RGActionWindow"]
+        if f then
+            f:ClearAllPoints()
+            f:SetPoint("CENTER", UIParent, "CENTER", 250, 0)
+        end
+    end)
+
+    ---------- Aktionsfenster – Button-Sichtbarkeit ----------
+    local awSectionLabel = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    awSectionLabel:SetPoint("TOPLEFT", langDD, "BOTTOMLEFT", 15, -14)
+    awSectionLabel:SetText(RG_L["OPT_AW_TITLE"] or "Action-Window:")
+
+    -- Zeile 1: HI und BYE
+    local awCbHI = CreateFrame("CheckButton", "RGAW_CB_HI", panel, "UICheckButtonTemplate")
+    awCbHI:SetSize(24, 24)
+    awCbHI:SetPoint("TOPLEFT", awSectionLabel, "BOTTOMLEFT", 0, -2)
+    local awLblHI = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    awLblHI:SetPoint("LEFT", awCbHI, "RIGHT", 2, 0)
+    awLblHI:SetText(RG_L["LABEL_HI"] or "Greeting")
+
+    local awCbBYE = CreateFrame("CheckButton", "RGAW_CB_BYE", panel, "UICheckButtonTemplate")
+    awCbBYE:SetSize(24, 24)
+    awCbBYE:SetPoint("LEFT", awCbHI, "RIGHT", 110, 0)
+    local awLblBYE = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    awLblBYE:SetPoint("LEFT", awCbBYE, "RIGHT", 2, 0)
+    awLblBYE:SetText(RG_L["LABEL_BYE"] or "Farewell")
+
+    -- Zeile 2: CUSTOM1 und CUSTOM2
+    local awCbC1 = CreateFrame("CheckButton", "RGAW_CB_C1", panel, "UICheckButtonTemplate")
+    awCbC1:SetSize(24, 24)
+    awCbC1:SetPoint("TOPLEFT", awCbHI, "BOTTOMLEFT", 0, -2)
+    local awLblC1 = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    awLblC1:SetPoint("LEFT", awCbC1, "RIGHT", 2, 0)
+
+    local awCbC2 = CreateFrame("CheckButton", "RGAW_CB_C2", panel, "UICheckButtonTemplate")
+    awCbC2:SetSize(24, 24)
+    awCbC2:SetPoint("LEFT", awCbC1, "RIGHT", 110, 0)
+    local awLblC2 = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    awLblC2:SetPoint("LEFT", awCbC2, "RIGHT", 2, 0)
+
+    local function SyncAWCheckbox(cb, key)
+        cb:SetScript("OnClick", function(self)
+            local db = RandomGreetingDB
+            if not db.actionWindowButtons then
+                db.actionWindowButtons = { HI = false, BYE = false, CUSTOM1 = false, CUSTOM2 = false }
+            end
+            db.actionWindowButtons[key] = (self:GetChecked() and true or false)
+            if RG_Internal.RebuildActionWindow then RG_Internal.RebuildActionWindow() end
+        end)
+    end
+    SyncAWCheckbox(awCbHI,  "HI")
+    SyncAWCheckbox(awCbBYE, "BYE")
+    SyncAWCheckbox(awCbC1,  "CUSTOM1")
+    SyncAWCheckbox(awCbC2,  "CUSTOM2")
+
+    -- Kompaktmodus-Checkbox (eigene Zeile, Abstand zur Reihe darüber)
+    local awCbCompact = CreateFrame("CheckButton", "RGAW_CB_COMPACT", panel, "UICheckButtonTemplate")
+    awCbCompact:SetSize(24, 24)
+    awCbCompact:SetPoint("TOPLEFT", awCbC1, "BOTTOMLEFT", 0, -8)
+    local awLblCompact = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    awLblCompact:SetPoint("LEFT", awCbCompact, "RIGHT", 2, 0)
+    awLblCompact:SetText(RG_L["OPT_AW_COMPACT"] or "Compact mode")
+    awCbCompact:SetScript("OnClick", function(self)
+        RandomGreetingDB.actionWindowCompact = (self:GetChecked() and true or false)
+        if RG_Internal.RebuildActionWindow then RG_Internal.RebuildActionWindow() end
+    end)
+
     ---------- List selector dropdown ----------
     local listLabel = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    listLabel:SetPoint("TOPLEFT", langDD, "BOTTOMLEFT", 15, -10)
+    listLabel:SetPoint("TOPLEFT", awCbCompact, "BOTTOMLEFT", 0, -10)
     listLabel:SetText(RG_L["OPT_LIST_LABEL"] or "List:")
 
     local listDD = CreateFrame("Frame", "RGOptionsListDD", panel, "UIDropDownMenuTemplate")
@@ -400,6 +474,19 @@ local function BuildOptionsPanel()
         listScrollFrame.offset = 0
         listScrollFrame:SetVerticalScroll(0)
         RefreshListRows()
+        -- Aktionsfenster-Checkboxen synchronisieren
+        local db     = RandomGreetingDB
+        local btnCfg = db.actionWindowButtons or {}
+        awCbHI:SetChecked(btnCfg.HI      == true)
+        awCbBYE:SetChecked(btnCfg.BYE    == true)
+        awCbC1:SetChecked(btnCfg.CUSTOM1 == true)
+        awCbC2:SetChecked(btnCfg.CUSTOM2 == true)
+        awCbCompact:SetChecked(db.actionWindowCompact == true)
+        -- Locale-Labels aktualisieren
+        awLblHI:SetText(RG_L["LABEL_HI"]  or "Greeting")
+        awLblBYE:SetText(RG_L["LABEL_BYE"] or "Farewell")
+        awLblC1:SetText(db.custom1Label or RG_L["LABEL_CUSTOM1"] or "Custom1")
+        awLblC2:SetText(db.custom2Label or RG_L["LABEL_CUSTOM2"] or "Custom2")
     end)
 
     ---------- Default button: reset language to Auto ----------
