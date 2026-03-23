@@ -1,6 +1,6 @@
 -- ==========================================================
--- RandomGreeting – Minimap-Button & Aktionsfenster
--- MinimapButton.lua  (geladen nach Options.lua)
+-- RandomGreeting – Aktionsfenster, Minimap-Button & Themes
+-- ActionWindow.lua  (geladen nach Options.lua)
 -- ==========================================================
 -- Texture-Hinweis: Das Minimap-Icon erwartet die Datei
 --   Interface\AddOns\RandomGreeting\Media\minimap.tga  (oder .blp / .png)
@@ -24,13 +24,123 @@ local CHANNEL_COLOR = {
 }
 
 -- Einzel-Buchstaben im Kompaktmodus
-local CHANNEL_SHORT = { SAY = "S", GUILD = "G", PARTY = "P", RAID = "R" }
+local CHANNEL_SHORT   = { SAY = "S",    GUILD = "G",     PARTY = "P",     RAID = "R"    }
+-- Klartext-Anzeige für Tooltips (kein Caps)
+local CHANNEL_DISPLAY = { SAY = "Say",  GUILD = "Guild",  PARTY = "Party",  RAID = "Raid"  }
 
 -- Forward-Deklarationen
 local AWF_Frame   = nil   -- Action-Window-Frame
 local MM_Button   = nil   -- Minimap-Button
 local AW_ChBtn    = nil   -- Kanal-Button im Aktionsfenster
 local AW_ListBtns = {}    -- Liste der Aktions-Buttons
+
+-- ==========================================================
+-- Theme-Definitionen
+-- ==========================================================
+
+local THEMES = {
+    wow = {
+        backdrop = {
+            bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+            tile = true, tileSize = 32, edgeSize = 32,
+            insets = { left = 8, right = 8, top = 8, bottom = 8 },
+        },
+        bgColor        = nil,   -- WoW-Default, kein explizites Setzen
+        borderColor    = nil,
+        titleColor     = { 1, 1, 1, 1 },
+        sepColor       = { 0.5, 0.5, 0.5, 0.6 },
+        btnNormalColor = { 1, 1, 1 },
+        btnPushedColor = { 1, 1, 1 },
+        btnTextColor   = { 1, 1, 1 },
+        btnTexture     = nil,   -- Original-Textur beibehalten
+        titleY         = -12,   -- WoW-Rahmen hat dickere Insets (8px)
+    },
+    modern = {
+        backdrop = {
+            bgFile   = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            tile = true, tileSize = 8, edgeSize = 16,
+            insets = { left = 4, right = 4, top = 4, bottom = 4 },
+        },
+        bgColor        = { 0, 0, 0, 0.85 },
+        borderColor    = { 0.5, 0.5, 0.5, 1.0 },
+        titleColor     = { 0.75, 0.75, 0.75, 1 },
+        sepColor       = { 0.5, 0.5, 0.5, 0.8 },
+        btnNormalColor = { 0.15, 0.15, 0.15 },
+        btnPushedColor = { 0.28, 0.28, 0.28 },
+        btnTextColor   = { 0.85, 0.85, 0.85 },
+        btnTexture     = "Interface\\Buttons\\WHITE8X8",
+        titleY         = -8,   -- Modern-Rahmen hat schmale Insets (4px)
+    },
+}
+
+local function ApplyTheme()
+    if not AWF_Frame then return end
+    local charDB    = RandomGreetingCharDB
+    local themeName = (charDB and charDB.theme) or "wow"
+    local theme     = THEMES[themeName] or THEMES["wow"]
+
+    AWF_Frame:SetBackdrop(theme.backdrop)
+    if theme.bgColor then
+        AWF_Frame:SetBackdropColor(unpack(theme.bgColor))
+    end
+    if theme.borderColor then
+        AWF_Frame:SetBackdropBorderColor(unpack(theme.borderColor))
+    end
+    if AWF_Frame.titleSep and theme.sepColor then
+        AWF_Frame.titleSep:SetVertexColor(unpack(theme.sepColor))
+    end
+    if AWF_Frame.titleTxt then
+        if theme.titleColor then
+            AWF_Frame.titleTxt:SetTextColor(unpack(theme.titleColor))
+        end
+        if theme.titleY then
+            AWF_Frame.titleTxt:ClearAllPoints()
+            AWF_Frame.titleTxt:SetPoint("TOP", AWF_Frame, "TOP", 0, theme.titleY)
+        end
+    end
+
+    -- Button-Optik: Texturen direkt setzen für zuverlässige Darstellung
+    local allBtns = {}
+    for _, btn in ipairs(AW_ListBtns) do allBtns[#allBtns + 1] = btn end
+    if AW_ChBtn then allBtns[#allBtns + 1] = AW_ChBtn end
+    for _, btn in ipairs(allBtns) do
+        if not btn.__rgOverlay then
+            local ov = btn:CreateTexture(nil, "ARTWORK", nil, 0)
+            ov:SetAllPoints(btn)
+            btn.__rgOverlay = ov
+        end
+        local ov = btn.__rgOverlay
+        local nt = btn:GetNormalTexture()
+
+        if theme.btnTexture then
+            -- Modern: Template-NormalTexture verstecken, flache Overlay-Farbe zeigen
+            if nt then nt:SetAlpha(0) end
+            ov:SetTexture("Interface\\Buttons\\WHITE8X8")
+            ov:SetVertexColor(unpack(theme.btnNormalColor or {0.15, 0.15, 0.15}))
+            ov:Show()
+        else
+            -- WoW: Template-NormalTexture wiederherstellen, Overlay verstecken
+            if nt then nt:SetAlpha(1) end
+            ov:Hide()
+        end
+
+        local fs = btn:GetFontString()
+        if fs then fs:SetTextColor(unpack(theme.btnTextColor or {1,1,1})) end
+    end
+
+    -- Schließen-Button Sichtbarkeit
+    if AWF_Frame.closeBtn then
+        if charDB and charDB.closeButtonHidden then
+            AWF_Frame.closeBtn:Hide()
+        else
+            AWF_Frame.closeBtn:Show()
+        end
+    end
+end
+
+RG_Internal.ApplyTheme = ApplyTheme
 
 -- ==========================================================
 -- Kanal-Hilfsfunktionen
@@ -58,7 +168,7 @@ local function NextChannel()
 end
 
 local function ChannelLabel(ch)
-    if RandomGreetingDB and RandomGreetingDB.actionWindowCompact then
+    if RandomGreetingCharDB and RandomGreetingCharDB.actionWindowCompact then
         return (CHANNEL_COLOR[ch] or "") .. (CHANNEL_SHORT[ch] or ch) .. "|r"
     end
     return (CHANNEL_COLOR[ch] or "") .. (ch or "?") .. "|r"
@@ -109,7 +219,7 @@ local MAX_LABEL_CHARS = 12  -- passt bei BTN_W=100 ohne Überlauf
 local COMPACT_LABEL = { HI = "Hi", BYE = "Bye", CUSTOM1 = "C1", CUSTOM2 = "C2" }
 
 local function IsCompact()
-    return RandomGreetingDB and RandomGreetingDB.actionWindowCompact == true
+    return RandomGreetingCharDB and RandomGreetingCharDB.actionWindowCompact == true
 end
 
 local function TruncateLabel(str)
@@ -194,7 +304,7 @@ local function RebuildAWFButtons()
         AW_ChBtn:SetScript("OnEnter", function(self)
             if IsCompact() then
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(GetChannel(), 1, 1, 1)
+                GameTooltip:SetText(CHANNEL_DISPLAY[GetChannel()] or GetChannel(), 1, 1, 1)
                 GameTooltip:Show()
             end
         end)
@@ -215,6 +325,9 @@ local function RebuildAWFButtons()
             + PAD
     if h < 60 then h = 60 end
     AWF_Frame:SetHeight(h)
+
+    -- Theme (inkl. Button-Optik) nach jedem Rebuild neu anwenden
+    ApplyTheme()
 end
 
 -- Öffentlich zugänglich damit Options.lua das Fenster nach Checkbox-Änderungen neu aufbaut
@@ -235,34 +348,25 @@ local function BuildActionWindow()
     f:EnableMouse(true)
     f:SetMovable(true)
     f:RegisterForDrag("LeftButton")
-    f:SetScript("OnDragStart", function(self) self:StartMoving() end)
+    f:SetScript("OnDragStart", function(self)
+        if RandomGreetingCharDB and RandomGreetingCharDB.actionWindowLocked then return end
+        self:StartMoving()
+    end)
     f:SetScript("OnDragStop",  function(self)
+        if RandomGreetingCharDB and RandomGreetingCharDB.actionWindowLocked then return end
         self:StopMovingOrSizing()
         -- GetLeft/GetTop liefern virtuelle Bildschirmkoordinaten (UIParent-Raum)
         local x = self:GetLeft()
         local y = self:GetTop() - UIParent:GetHeight()  -- negativer Offset von TOPLEFT
         RandomGreetingCharDB.actionWindowPos = { x = x, y = y }
     end)
-    f:SetBackdrop({
-        bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        tile     = true, tileSize = 32, edgeSize = 32,
-        insets   = { left = 8, right = 8, top = 8, bottom = 8 },
-    })
+    -- Backdrop wird durch ApplyTheme() gesetzt (direkt nach dem Frame-Aufbau aufgerufen)
 
-    -- Titelzeile (einfache Beschriftung + Trennlinie, bleibt im Frame)
+    -- Titelzeile
     local titleTxt = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    titleTxt:SetPoint("TOP", f, "TOP", 0, -10)
+    titleTxt:SetPoint("TOP", f, "TOP", 0, -6)
     titleTxt:SetText(IsCompact() and "RG" or ADDON_NAME)
     f.titleTxt = titleTxt
-
-    local titleSep = f:CreateTexture(nil, "ARTWORK")
-    titleSep:SetTexture("Interface\\Buttons\\WHITE8X8")
-    titleSep:SetVertexColor(0.5, 0.5, 0.5, 0.6)
-    titleSep:SetHeight(1)
-    titleSep:SetPoint("TOPLEFT",  f, "TOPLEFT",  9, -20)
-    titleSep:SetPoint("TOPRIGHT", f, "TOPRIGHT", -9, -20)
-    f.titleSep = titleSep
 
     -- Schließen-Button (X)
     local closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
@@ -272,6 +376,7 @@ local function BuildActionWindow()
         f:Hide()
         RandomGreetingDB.actionWindowShown = false
     end)
+    f.closeBtn = closeBtn
 
     -- Kanal-Zyklus-Button (ganz unten)
     local chBtn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
@@ -288,7 +393,7 @@ local function BuildActionWindow()
     AW_ChBtn = chBtn
 
     AWF_Frame = f
-    RebuildAWFButtons()
+    RebuildAWFButtons()   -- ruft ApplyTheme() am Ende selbst auf
 
     -- Position wiederherstellen (nach erstem Laden: CENTER-Default)
     local db  = RandomGreetingDB
@@ -297,7 +402,7 @@ local function BuildActionWindow()
     if pos and pos.x then
         f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", pos.x, pos.y)
     else
-        f:SetPoint("CENTER", UIParent, "CENTER", 250, 0)
+        f:SetPoint("TOPLEFT", UIParent, "CENTER", 250, 0)
     end
 
     -- Sichtbarkeit wiederherstellen
@@ -432,15 +537,48 @@ mmInitFrame:SetScript("OnEvent", function(self)
     if db.minimapAngle        == nil then db.minimapAngle        = 225   end
     if db.actionWindowChannel == nil then db.actionWindowChannel = "GUILD" end
     if db.actionWindowShown   == nil then db.actionWindowShown   = false  end
-    if RandomGreetingCharDB                    == nil then RandomGreetingCharDB                    = {}     end
-    if RandomGreetingCharDB.actionWindowPos    == nil then RandomGreetingCharDB.actionWindowPos    = false  end
+    if RandomGreetingCharDB                       == nil then RandomGreetingCharDB                       = {}     end
+    if RandomGreetingCharDB.actionWindowPos        == nil then RandomGreetingCharDB.actionWindowPos        = false  end
+    if RandomGreetingCharDB.actionWindowCompact    == nil then RandomGreetingCharDB.actionWindowCompact    = false  end
+    if RandomGreetingCharDB.theme                  == nil then RandomGreetingCharDB.theme                  = "wow"  end
+    if RandomGreetingCharDB.minimapHidden          == nil then RandomGreetingCharDB.minimapHidden          = false  end
+    if RandomGreetingCharDB.actionWindowLocked     == nil then RandomGreetingCharDB.actionWindowLocked     = false  end
+    if RandomGreetingCharDB.closeButtonHidden      == nil then RandomGreetingCharDB.closeButtonHidden      = false  end
     if db.actionWindowButtons == nil then
         db.actionWindowButtons = { HI = true, BYE = true, CUSTOM1 = false, CUSTOM2 = false }
     end
-    if db.actionWindowCompact  == nil then db.actionWindowCompact  = false end
 
     BuildMinimapButton()
     BuildActionWindow()
 
+    -- Minimap-Button ggf. direkt ausblenden
+    if RandomGreetingCharDB.minimapHidden and MM_Button then
+        MM_Button:Hide()
+    end
+
     self:UnregisterEvent("PLAYER_LOGIN")
 end)
+
+-- ==========================================================
+-- Helper für Options.lua
+-- ==========================================================
+
+--- Minimap-Button sichtbar/unsichtbar schalten und Einstellung speichern.
+RG_Internal.SetMinimapVisible = function(visible)
+    if RandomGreetingCharDB then
+        RandomGreetingCharDB.minimapHidden = not visible
+    end
+    if MM_Button then
+        if visible then MM_Button:Show() else MM_Button:Hide() end
+    end
+end
+
+--- Schließen-Button des Aktionsfensters ein-/ausblenden.
+RG_Internal.SetCloseBtnVisible = function(visible)
+    if RandomGreetingCharDB then
+        RandomGreetingCharDB.closeButtonHidden = not visible
+    end
+    if AWF_Frame and AWF_Frame.closeBtn then
+        if visible then AWF_Frame.closeBtn:Show() else AWF_Frame.closeBtn:Hide() end
+    end
+end

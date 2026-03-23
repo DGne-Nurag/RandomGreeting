@@ -73,8 +73,11 @@ L["OPT_IMPORT_BTN"]           = "Import..."
 L["OPT_EXPORT_BTN"]           = "Export..."
 L["OPT_MESSAGES_TITLE"]       = "Messages in this list:"
 L["OPT_DELETE_BTN"]           = "Del"
-L["OPT_RESET_BTN"]            = "Reset to defaults"
+L["OPT_RESET_BTN"]            = "Reset Lists"
+L["OPT_RESET_BTN_TT"]         = "Resets Hi and Bye to language defaults:"
 L["OPT_RESET_POS_BTN"]        = "Reset Window position"
+L["TT_OFF"]                   = "Off"
+L["TT_ON"]                    = "On"
 L["OPT_GENERATOR_BTN"]        = "Import Generator (external)"
 L["OPT_GENERATOR_URL_TITLE"]  = "Import Generator URL – copy & open in browser"
 L["OPT_ADD_BTN"]              = "Add"
@@ -90,6 +93,15 @@ L["AWF_CHANNEL"]              = "Channel"
 -- Options – action window section
 L["OPT_AW_TITLE"]             = "Action Window:"
 L["OPT_AW_COMPACT"]           = "Compact mode"
+
+-- Options – appearance section
+L["OPT_APPEARANCE_TITLE"]     = "Window Design:"
+L["OPT_THEME_LABEL"]          = "Window Design:"
+L["OPT_THEME_WOW"]            = "WoW (Classic)"
+L["OPT_THEME_MODERN"]         = "Modern (dark)"
+L["OPT_MINIMAP_HIDE"]         = "Minimap Button"
+L["OPT_AW_LOCK_POS"]          = "Lock window position"
+L["OPT_HIDE_CLOSE_BTN"]       = "Hide close button"
 
 -- ----------------------------------------------------------
 -- Default messages (English)

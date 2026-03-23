@@ -72,9 +72,12 @@ L["OPT_LIST_LABEL"]         = "Aktive Liste:"
 L["OPT_IMPORT_BTN"]           = "Importieren..."
 L["OPT_EXPORT_BTN"]           = "Exportieren..."
 L["OPT_MESSAGES_TITLE"]       = "Nachrichten in dieser Liste:"
-L["OPT_DELETE_BTN"]           = "Löschen"
-L["OPT_RESET_BTN"]            = "Auf Standard zurücksetzen"
-L["OPT_RESET_POS_BTN"]        = "Fensterposition zurücksetzen"
+L["OPT_DELETE_BTN"]           = "Del"
+L["OPT_RESET_BTN"]            = "Listen zurücksetzen"
+L["OPT_RESET_BTN_TT"]         = "Setzt Hi- und Bye-Listen auf Sprachstandard zurück:"
+L["OPT_RESET_POS_BTN"]        = "Position zurücksetzen"
+L["TT_OFF"]                   = "Aus"
+L["TT_ON"]                    = "An"
 L["OPT_GENERATOR_BTN"]        = "Import-Generator (extern)"
 L["OPT_GENERATOR_URL_TITLE"]  = "Import-Generator URL – kopieren und im Browser öffnen"
 L["OPT_ADD_BTN"]              = "Hinzufügen"
@@ -90,6 +93,15 @@ L["AWF_CHANNEL"]              = "Kanal"
 -- Optionen – Aktionsfenster-Abschnitt
 L["OPT_AW_TITLE"]             = "Aktionsfenster:"
 L["OPT_AW_COMPACT"]           = "Kompaktmodus"
+
+-- Optionen – Aussehen
+L["OPT_APPEARANCE_TITLE"]     = "Fenster-Design:"
+L["OPT_THEME_LABEL"]          = "Fenster-Design:"
+L["OPT_THEME_WOW"]            = "WoW (Classic)"
+L["OPT_THEME_MODERN"]         = "Modern (dunkel)"
+L["OPT_MINIMAP_HIDE"]         = "Minimap Button"
+L["OPT_AW_LOCK_POS"]          = "Fensterposition fixieren"
+L["OPT_HIDE_CLOSE_BTN"]       = "Schließen-Button ausblenden"
 
 -- ----------------------------------------------------------
 -- Standard-Nachrichten (Deutsch)

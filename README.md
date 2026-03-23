@@ -33,6 +33,7 @@ A small icon on the minimap gives you quick access to everything:
 - **Left-click** — toggle the Action Window open/closed
 - **Right-click** — open the Options panel
 - **Drag** — reposition the button around the minimap
+- Can be **hidden** via the Options panel if you prefer a cleaner minimap
 
 **Action Window**
 
@@ -41,6 +42,15 @@ A compact floating window right in your game UI. Click a button to instantly pos
 - Toggle individual list buttons (Hi, Bye, Custom 1, Custom 2) on or off in the Options panel
 - Cycle through channels (Say / Guild / Party / Raid) directly in the window
 - **Compact mode** — halves the window width and uses short labels (Hi / Bye / C1 / C2) and single-letter channel codes (S / G / P / R) for a minimal footprint
+- **Lock position** — prevent accidental dragging
+- **Hide close button** — keep the window clean and dismissible only via the minimap button
+
+**Two Themes**
+
+Choose the look that fits your UI — switchable per character in the Options panel:
+
+- **WoW (Classic)** — the familiar Blizzard dialog style
+- **Modern (dark)** — a sleek dark background with a thin border
 
 **Huge Starter Pack**
 
@@ -84,7 +94,7 @@ All four lists share the same sub-commands. Replace `/rhi` with `/rbye`, `/rcust
 ## 💾 Technical Info
 
 - **SavedVariables:** `RandomGreetingDB` (account-wide — messages, settings, minimap position)
-- **SavedVariablesPerCharacter:** `RandomGreetingCharDB` (per character — Action Window position)
+- **SavedVariablesPerCharacter:** `RandomGreetingCharDB` (per character — Action Window position, theme, compact mode, lock, minimap visibility, close button)
 - **Supports:** Classic Era / Classic Hardcore (1.15.x) and TBC Anniversary (2.5.x) — tested and verified on these versions
 - **No libraries required** — pure Lua, zero dependencies
 
