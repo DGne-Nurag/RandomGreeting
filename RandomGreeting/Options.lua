@@ -157,34 +157,31 @@ local function BuildOptionsPanel()
     langLabel:SetPoint("TOPLEFT", versionFS, "BOTTOMLEFT", 0, -12)
     langLabel:SetText(RG_L["OPT_LANG_LABEL"] or "Language:")
 
-    local langDD = CreateFrame("Frame", "RGOptionsLangDD", panel, "UIDropDownMenuTemplate")
-    langDD:SetPoint("TOPLEFT", langLabel, "BOTTOMLEFT", -15, -4)
-    UIDropDownMenu_SetWidth(langDD, 240)
-
-    local function InitLangDD(_, level)
+    local langDD
+    langDD = RG_Compat.CreateDropdown(panel, "RGOptionsLangDD", 240, function()
         local curVal = RandomGreetingDB and (RandomGreetingDB.locale or "auto") or "auto"
+        local entries = {}
         for _, entry in ipairs(LANG_ENTRIES) do
-            local info   = {}
-            info.text    = RG_L[entry.key] or entry.fallback
-            info.value   = entry.value
-            info.checked = curVal == entry.value
-            info.func    = function(btn)
-                local val = btn.value
-                RandomGreetingDB.locale = val
-                local eff = (val == "auto")
-                    and ((GetLocale() == "deDE") and "deDE" or "enUS")
-                    or val
-                RG_Internal.ApplyLocale(eff)
-                UIDropDownMenu_SetText(langDD, GetLangText(val))
-                CloseDropDownMenus()
-                if RefreshPanelTexts then RefreshPanelTexts() end
-                if RG_Internal.RebuildActionWindow then RG_Internal.RebuildActionWindow() end
-            end
-            UIDropDownMenu_AddButton(info, level)
+            local val = entry.value
+            entries[#entries + 1] = {
+                text    = RG_L[entry.key] or entry.fallback,
+                checked = curVal == val,
+                func    = function()
+                    RandomGreetingDB.locale = val
+                    local eff = (val == "auto")
+                        and ((GetLocale() == "deDE") and "deDE" or "enUS")
+                        or val
+                    RG_Internal.ApplyLocale(eff)
+                    RG_Compat.SetDropdownText(langDD, GetLangText(val))
+                    if RefreshPanelTexts then RefreshPanelTexts() end
+                    if RG_Internal.RebuildActionWindow then RG_Internal.RebuildActionWindow() end
+                end,
+            }
         end
-    end
-    UIDropDownMenu_Initialize(langDD, InitLangDD)
-    UIDropDownMenu_SetText(langDD, GetLangText(
+        return entries
+    end)
+    langDD:SetPoint("TOPLEFT", langLabel, "BOTTOMLEFT", -15, -4)
+    RG_Compat.SetDropdownText(langDD, GetLangText(
         RandomGreetingDB and (RandomGreetingDB.locale or "auto") or "auto"
     ))
     panel.langDD = langDD
@@ -320,28 +317,26 @@ local function BuildOptionsPanel()
         return "WoW (Classic)"
     end
 
-    local themeDD = CreateFrame("Frame", "RGOptionsThemeDD", panel, "UIDropDownMenuTemplate")
-    themeDD:SetPoint("TOPLEFT", appearLabel, "BOTTOMLEFT", -15, -2)
-    UIDropDownMenu_SetWidth(themeDD, 240)
-
-    local function InitThemeDD(_, level)
+    local themeDD
+    themeDD = RG_Compat.CreateDropdown(panel, "RGOptionsThemeDD", 240, function()
         local curVal = (RandomGreetingCharDB and RandomGreetingCharDB.theme) or "wow"
+        local entries = {}
         for _, entry in ipairs(THEME_ENTRIES) do
-            local info   = {}
-            info.text    = RG_L[entry.key] or entry.fallback
-            info.value   = entry.value
-            info.checked = curVal == entry.value
-            info.func    = function(btn)
-                RandomGreetingCharDB.theme = btn.value
-                UIDropDownMenu_SetText(themeDD, GetThemeText(btn.value))
-                CloseDropDownMenus()
-                if RG_Internal.ApplyTheme then RG_Internal.ApplyTheme() end
-            end
-            UIDropDownMenu_AddButton(info, level)
+            local val = entry.value
+            entries[#entries + 1] = {
+                text    = RG_L[entry.key] or entry.fallback,
+                checked = curVal == val,
+                func    = function()
+                    RandomGreetingCharDB.theme = val
+                    RG_Compat.SetDropdownText(themeDD, GetThemeText(val))
+                    if RG_Internal.ApplyTheme then RG_Internal.ApplyTheme() end
+                end,
+            }
         end
-    end
-    UIDropDownMenu_Initialize(themeDD, InitThemeDD)
-    UIDropDownMenu_SetText(themeDD, GetThemeText((RandomGreetingCharDB and RandomGreetingCharDB.theme) or "wow"))
+        return entries
+    end)
+    themeDD:SetPoint("TOPLEFT", appearLabel, "BOTTOMLEFT", -15, -2)
+    RG_Compat.SetDropdownText(themeDD, GetThemeText((RandomGreetingCharDB and RandomGreetingCharDB.theme) or "wow"))
 
     -- Kompaktmodus-Checkbox (rechts neben Theme-Dropdown)
     local awCbCompact = CreateFrame("CheckButton", "RGAW_CB_COMPACT", panel, "UICheckButtonTemplate")
@@ -396,31 +391,28 @@ local function BuildOptionsPanel()
     listLabel:SetPoint("TOPLEFT", cbMinimapHide, "BOTTOMLEFT", 0, -6)
     listLabel:SetText(RG_L["OPT_LIST_LABEL"] or "List:")
 
-    local listDD = CreateFrame("Frame", "RGOptionsListDD", panel, "UIDropDownMenuTemplate")
-    listDD:SetPoint("TOPLEFT", listLabel, "BOTTOMLEFT", -15, -2)
-    UIDropDownMenu_SetWidth(listDD, 240)
-
     local LIST_KEYS_ORDER = { "HI", "BYE", "CUSTOM1", "CUSTOM2" }
 
-    local function InitListDD(_, level)
+    local listDD
+    listDD = RG_Compat.CreateDropdown(panel, "RGOptionsListDD", 240, function()
+        local entries = {}
         for _, key in ipairs(LIST_KEYS_ORDER) do
-            local info   = {}
-            info.text    = GetListLabel(key)
-            info.value   = key
-            info.checked = selectedListKey == key
-            info.func    = function(btn)
-                selectedListKey = btn.value
-                UIDropDownMenu_SetText(listDD, GetListLabel(selectedListKey))
-                CloseDropDownMenus()
-                listScrollFrame.offset = 0
-                listScrollFrame:SetVerticalScroll(0)
-                RefreshListRows()
-            end
-            UIDropDownMenu_AddButton(info, level)
+            entries[#entries + 1] = {
+                text    = GetListLabel(key),
+                checked = selectedListKey == key,
+                func    = function()
+                    selectedListKey = key
+                    RG_Compat.SetDropdownText(listDD, GetListLabel(selectedListKey))
+                    listScrollFrame.offset = 0
+                    listScrollFrame:SetVerticalScroll(0)
+                    RefreshListRows()
+                end,
+            }
         end
-    end
-    UIDropDownMenu_Initialize(listDD, InitListDD)
-    UIDropDownMenu_SetText(listDD, GetListLabel(selectedListKey))
+        return entries
+    end)
+    listDD:SetPoint("TOPLEFT", listLabel, "BOTTOMLEFT", -15, -2)
+    RG_Compat.SetDropdownText(listDD, GetListLabel(selectedListKey))
     panel.listDD = listDD
 
     ---------- Message list header ----------
@@ -593,9 +585,9 @@ local function BuildOptionsPanel()
         local db     = RandomGreetingDB
         local charDB = RandomGreetingCharDB
         -- Dropdowns
-        UIDropDownMenu_SetText(langDD,  GetLangText((db and db.locale) or "auto"))
-        UIDropDownMenu_SetText(listDD,  GetListLabel(selectedListKey))
-        UIDropDownMenu_SetText(themeDD, GetThemeText((charDB and charDB.theme) or "wow"))
+        RG_Compat.SetDropdownText(langDD, GetLangText((db and db.locale) or "auto"))
+        RG_Compat.SetDropdownText(listDD, GetListLabel(selectedListKey))
+        RG_Compat.SetDropdownText(themeDD, GetThemeText((charDB and charDB.theme) or "wow"))
         -- Abschnitts-Labels
         langLabel:SetText(RG_L["OPT_LANG_LABEL"]         or "Language:")
         awSectionLabel:SetText(RG_L["OPT_AW_TITLE"]      or "Action-Window:")
@@ -640,7 +632,7 @@ local function BuildOptionsPanel()
         awCbC1:SetChecked(btnCfg.CUSTOM1 == true)
         awCbC2:SetChecked(btnCfg.CUSTOM2 == true)
         awCbCompact:SetChecked(charDB.actionWindowCompact == true)
-        UIDropDownMenu_SetText(themeDD, GetThemeText(charDB.theme or "wow"))
+        RG_Compat.SetDropdownText(themeDD, GetThemeText(charDB.theme or "wow"))
         cbMinimapHide:SetChecked(not charDB.minimapHidden)
         cbLockPos:SetChecked(charDB.actionWindowLocked  == true)
         cbHideClose:SetChecked(charDB.closeButtonHidden == true)
@@ -652,7 +644,7 @@ local function BuildOptionsPanel()
             RandomGreetingDB.locale = "auto"
             local eff = (GetLocale() == "deDE") and "deDE" or "enUS"
             RG_Internal.ApplyLocale(eff)
-            UIDropDownMenu_SetText(langDD, GetLangText("auto"))
+            RG_Compat.SetDropdownText(langDD, GetLangText("auto"))
         end
     end
 

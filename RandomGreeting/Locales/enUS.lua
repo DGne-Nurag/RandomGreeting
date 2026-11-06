@@ -46,6 +46,7 @@ L["WARN_RESET"]             = "Warning: Reset to defaults? Type |cff00ccff%s res
 
 L["ERR_NO_TEXT"]            = "Error: No text provided."
 L["ERR_WHISPER_NO_TARGET"]  = "Error: No player name provided. Usage: /rhi w [name]"
+L["ERR_CHAT_LOCKDOWN"]      = "Chat messages are currently blocked for addons (e.g. during a boss encounter)."
 L["ERR_INVALID_ID"]         = "Error: Invalid ID."
 L["ERR_EMPTY_LIST"]         = "No entries in list!"
 L["ERR_IMPORT_INVALID"]     = "Error: Invalid import string. Must start with RG2:"

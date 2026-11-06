@@ -1,7 +1,7 @@
-## Interface: 11508, 20505
+## Interface: 11509, 20506, 16001
 ## Title: RandomGreeting
 ## Notes: Posts random messages without repeats. Multilingual, importable lists, custom commands.
-## Version: 2.5.1
+## Version: 2.6.0
 ## IconTexture: Interface\AddOns\RandomGreeting\Media\logo.tga
 ## SavedVariables: RandomGreetingDB
 ## SavedVariablesPerCharacter: RandomGreetingCharDB
@@ -9,6 +9,7 @@
 Locales\Locales.lua
 Locales\enUS.lua
 Locales\deDE.lua
+Compat.lua
 RandomGreeting.lua
 Options.lua
 ActionWindow.lua

@@ -46,6 +46,7 @@ L["WARN_RESET"]             = "Warnung: Auf Standard zurücksetzen? Tippe |cff00
 
 L["ERR_NO_TEXT"]            = "Fehler: Kein Text angegeben."
 L["ERR_WHISPER_NO_TARGET"]  = "Fehler: Kein Spielername angegeben. Nutzung: /rhi w [Name]"
+L["ERR_CHAT_LOCKDOWN"]      = "Chatnachrichten sind für Addons gerade gesperrt (z. B. während eines Bosskampfs)."
 L["ERR_INVALID_ID"]         = "Fehler: Ungültige ID."
 L["ERR_EMPTY_LIST"]         = "Keine Einträge in der Liste!"
 L["ERR_IMPORT_INVALID"]     = "Fehler: Ungültiger Importstring. Muss mit RG2: beginnen."

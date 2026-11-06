@@ -204,7 +204,7 @@ local function SendListMsg(listKey)
     end
 
     local idx = table.remove(pool, math.random(1, #pool))
-    SendChatMessage(msgs[idx], GetChannel(), nil, nil)
+    RG_Compat.SendChatMessage(msgs[idx], GetChannel(), nil, nil)
 end
 
 -- ==========================================================

@@ -498,7 +498,7 @@ local function HandleCommand(msg, messages, pool, label, slash, listKey, default
         end
         CheckPool(pool, messages)
         local idx = table.remove(pool, math.random(1, #pool))
-        SendChatMessage(messages[idx], target, nil, whisperTarget)
+        RG_Compat.SendChatMessage(messages[idx], target, nil, whisperTarget)
     end
 end
 
